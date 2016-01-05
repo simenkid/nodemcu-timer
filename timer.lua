@@ -1,3 +1,10 @@
+------------------------------------------------------------------------------
+-- Timer Utility in Node.js Style
+-- 
+-- LICENSE: MIT
+-- Simen Li <simenkid@gmail.com>
+------------------------------------------------------------------------------
+
 local timer = {}
 local exequeImmed = {}
 local exeque = {}
