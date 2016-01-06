@@ -210,7 +210,7 @@ Change the internal timer accroding to the specified timer id (default is 6). Be
   
 **Arguments:**  
 
-1. `tid` (_number_): Id of the timer to use. If it the same with the current id, nothing will happen.
+1. `tid` (_number_): Id of the timer to use. If it is the same with the current id, nothing will happen.
 
 **Returns:**  
   
