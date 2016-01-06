@@ -6,6 +6,7 @@
 ------------------------------------------------------------------------------
 
 local timer = {}
+local _exequeImmed = {}
 local exequeImmed = {}
 local exeque = {}
 local ttbl = {}
@@ -24,9 +25,17 @@ function checkloops()
 
     local tobj
 
+    if (#_exequeImmed > 0) then
+        for i, immed in ipairs(_exequeImmed) do
+            table.insert(exequeImmed, i)
+            table.remove(_exequeImmed, i)
+        end
+    end
+
     if (#exequeImmed > 0) then
-        tobj = exequeImmed[1]
-        table.remove(exequeImmed, 1)
+        -- Immediately execute all targets
+        for i, immed in ipairs(exequeImmed) do immed.f(unpack(immed.args)) end
+        for i, immed in ipairs(exequeImmed) do table.remove(exequeImmed, i) end
     elseif (#exeque > 0) then
         tobj = exeque[1]
         table.remove(exeque, 1)
@@ -60,6 +69,7 @@ function timer.stop()
     tmr.stop(timer.id)
     timer.enable = false
 
+    for i, _ in _exequeImmed do table.remove(_exequeImmed, i) end
     for i, _ in exequeImmed do table.remove(exequeImmed, i) end
     for i, _ in exeque do table.remove(exeque, i) end
     for i, _ in ttbl do table.remove(ttbl, i) end
@@ -77,7 +87,7 @@ function timer.setImmediate(fn, ...)
     if (timer.enable == false) then timer.start() end
 
     local tobj = { t = 0, f = fn, rp = 0, args = { ... } }
-    table.insert(exequeImmed, tobj)
+    table.insert(_exequeImmed, tobj)
     return tobj
 end
 
@@ -86,7 +96,7 @@ function timer.setTimeout(fn, delay, ...)
 
     local tobj = { t = delay, f = fn, rp = 0, args = { ... } }
 
-    if (delay < 2) then
+    if (delay < 2 or delay > 2147483646) then
         tobj.delay = 1
         table.insert(exeque, tobj)
     else
@@ -100,7 +110,7 @@ function timer.setInterval(fn, delay, ...)
     if (timer.enable == false) then timer.start() end
 
     local tobj = { t = delay, f = fn, rp = delay, args = { ... } }
-    if (delay < 2) then
+    if (delay < 2 or delay > 2147483646) then
         tobj.delay = 1
         table.insert(exeque, tobj)
     else
@@ -110,6 +120,10 @@ function timer.setInterval(fn, delay, ...)
 end
 
 function timer.clearImmediate(tobj)
+    for i, v in _exequeImmed do
+        if (tobj == v) then table.remove(_exequeImmed, i) end
+    end
+
     for i, v in exequeImmed do
         if (tobj == v) then table.remove(exequeImmed, i) end
     end
