@@ -204,13 +204,13 @@ timer.clearImmediate(tobj)
 
 <a name="API_set"></a>
 ### set(tid)
-Change the internal timer accroding to the specified timer id (default is 6). Be aware of that all callbacks in queue will be cleared when you chagne to a new timer. It is suggested to use this function within your init code only.
+Change the internal timer accroding to the specified timer id (default is 6). Be aware of that all callbacks in queue will be cleared when you change to a new timer. It is suggested to use this function within your code of initialization only.
 
  You can use the property `timer.id` to know which timer is used as an internal one.
   
 **Arguments:**  
 
-1. `tid` (_number_): This is optional. If given, all listeners attached to the specified event will be removed. If not given, all listeners of the emiiter will be removed.
+1. `tid` (_number_): Id of the timer to use. If it the same with the current id, nothing will happen.
 
 **Returns:**  
   
