@@ -15,12 +15,13 @@ Compatible Lua version: 5.1.x
 
 The [**nodemcu**](https://github.com/nodemcu/nodemcu-firmware) `tmr` module has 7 timers (id=0~6) for you to schedule your things with `tmr.alarm()`. You would face a problem of managing callbacks with the specified timer ids to start or stop the scheduled alarms. This is the reason why **nodemcu-timer** comes out. With **nodemcu-timer**, you don't have to worry about whether a timer is available or not. It is a soft timer utility that allows you to schedule tasks with Javascript(/node.js) style APIs in your **nodemcu** project, i.e., `setTimeout()` and `clearTimeout()`.  
   
-**nodemcu-timer** uses a single timer to simulate the behavior of `setTimeout()`, `setInterval()`, and `setImmediate()`. Only one task executes when a tick fires (excepts those scheduled by [`setImmediate()`](#API_setImmediate)), thus **nodemcu-timer** does not guarantee that the callback will fire at exact timing but as close as possilbe. When a callback is _setImmediate_, it will be executed at right next tick immediately even if there are other tasks being due at the same time. The internal timer will automatically start when a scheduled task enqueues, and automatically stopped when there is no task in queues. **nodemcu-timer** uses only a single timer (id=6 by default) internally, and you are free to use other 5 timers that `tmr` provides.
+**nodemcu-timer** uses a single timer to simulate the behavior of `setTimeout()`, `setInterval()`, and `setImmediate()`. Only one task executes when a tick fires (excepts those scheduled by [`setImmediate()`](#API_setImmediate)), thus **nodemcu-timer** does not guarantee that the callback will fire at exact timing but as close as possilbe. When a callback is _setImmediate_, it will be executed at right next tick immediately even if there are other tasks being due at the same time. The internal timer will automatically start when a scheduled task enqueues, and automatically stopped when there is no task in queues. **nodemcu-timer** uses only a single timer (id=6 by default) internally, and you are free to use other 5 timers that `tmr` provides.  
+
+If you like to code something in asynchronous style on **nodemcu**, might I sugguest [**lua-events**](https://github.com/simenkid/lua-events)? They are working well with each other to help arrange your asynchronous flow, e.g. your function can defer its callback and return right away.  
 
 [**Note**]  
-This module internally polls its task queues every 2ms. When you call `setTimeout()` and `setInterval()`, it is better to give the `delay` with an even number, e.g., `setTimeout(callback, 2000)` will fire the callback in 2 seconds. It is okay for `delay` to be odd, it will minus 1 to be even implicitly and will result in a timing error as small as 1ms. I think this small error is negligible if you are scheduling your task with an interval up to few hundreds of ms.  
-(I didn't use a tick of 1ms, because `tmr` is a bad ass when you give him a repeat interval of 1ms. If you do so, nodemcu will crash and I don't know why.)
-
+This module internally polls its task queues every 2ms. When you call `setTimeout()` and `setInterval()`, it is better to give the `delay` with an even number, e.g., `setTimeout(callback, 2000)` will fire the callback in 2 seconds. It is okay for `delay` to be odd, it will minus 1 to be even implicitly and will result in a timing error as short as 1ms. I think this small error is negligible if you are scheduling your task with an interval beyond few hundreds of ms.  
+(I didn't use a tick of 1ms, because `tmr` is a bad ass when you give him a repeat interval of 1ms. If you do so, nodemcu will crash and I don't know why.)  
 
 <a name="Installation"></a>
 ## 2. Installation
@@ -118,7 +119,7 @@ If `delay` is larger than 2147483647 ms (~25 days) or less than 2, **nodemcu-tim
   
 **Returns:**  
   
-* (_Object_) Timer-object.
+* (_object_) Timer-object.
 
 **Examples:**
 
@@ -136,7 +137,7 @@ Removes a time-object of interval from repeatly triggering.
   
 **Arguments:**  
 
-1. `tobj` (_Object_): Timed-object to remove.
+1. `tobj` (_object_): Timed-object to remove.
   
 **Returns:**  
   
@@ -167,11 +168,11 @@ local repeater = timer.setInterval(function ()
 end, 1000)
 ```
   
-This is because the `repeater` variable is not referenced properly. It is a problem of Lua. All you have to do is decalre your local variable first, and then assign something to it. Here is an example:
+This is because the `repeater` variable is not referencing properly. It is a problem of Lua. All you have to do is to decalre your local variable first, and then assign something to it. Here is an example:
 
 ```lua
 local count = 0
-local repeater  -- declare
+local repeater  -- declare first
 -- and then assign
 repeater = timer.setInterval(function ()
     count = count + 1
@@ -198,7 +199,7 @@ The callbacks for immediate execution enqueues in the order in which they were c
   
 **Returns:**  
   
-* (_Object_) Timer-object.
+* (_object_) Timer-object.
 
 **Examples:**
 
@@ -216,7 +217,7 @@ Removes an immediate time-object from triggering.
   
 **Arguments:**  
 
-1. `tobj` (_Object_): Timed-object to remove.
+1. `tobj` (_object_): Timed-object to remove.
 
 **Returns:**  
   
