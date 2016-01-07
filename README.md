@@ -1,6 +1,7 @@
 nodemcu-timer
 ========================
 Current version: v1.0.0 (stable)
+Compatible Lua version: 5.1.x
 <br />
 
 ## Table of Contents
@@ -27,7 +28,7 @@ This module internally polls its task queues every 2ms. When you call `setTimeou
 > $ git clone https://github.com/simenkid/nodemcu-timer.git
   
 Just include the file `timer.lua` or use the minified one `timer_min.lua` in your project.  
-If you are with the **nodemcu** on ESP8266, it would be good for you to compile `*.lua` text file into `*.lc` to further lower memory usage.  
+If you are with the **nodemcu** on ESP8266, it would be good for you to compile `*.lua` text file into `*.lc` bytecode to further lower memory usage.  
 
 <a name="APIs"></a>
 ## 3. APIs
@@ -42,7 +43,7 @@ If you are with the **nodemcu** on ESP8266, it would be good for you to compile 
 
 *************************************************
 ### timer utility
-Exposed by `require 'nodemcu-timer'`  
+Exposed by `require 'timer'`  
   
 ```lua
 local timer = require 'timer'  -- or 'timer_min'
@@ -151,6 +152,34 @@ local repeater = timer.setInterval(function ()
 end, 1000)
 
 timer.clearInterval(repeater)
+```
+  
+Be careful if you are trying to cancel the scheduled task inside itself. The following example won't work!
+
+```lua
+local count = 0
+local repeater = timer.setInterval(function ()
+    count = count + 1
+    if (count == 5) then
+        -- This will not work. 
+        timer.clearInterval(repeater)
+    end
+end, 1000)
+```
+  
+This is because the `repeater` variable is not referenced properly. It is a problem of Lua. All you have to do is decalre your local variable first, and then assign something to it. Here is an example:
+
+```lua
+local count = 0
+local repeater  -- declare
+-- and then assign
+repeater = timer.setInterval(function ()
+    count = count + 1
+    if (count == 5) then
+        -- This will work. 
+        timer.clearInterval(repeater)
+    end
+end, 1000)
 ```
   
 ********************************************
