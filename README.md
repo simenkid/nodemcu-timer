@@ -1,5 +1,6 @@
 nodemcu-timer
 ========================
+Current version: v1.0.0 (stable)
 <br />
 
 ## Table of Contents
@@ -13,7 +14,11 @@ nodemcu-timer
 
 The [**nodemcu**](https://github.com/nodemcu/nodemcu-firmware) `tmr` module has 7 timers (id=0~6) for you to schedule your things with `tmr.alarm()`. You would face a problem of managing callbacks with the specified timer ids to start or stop the scheduled alarms. This is the reason why **nodemcu-timer** comes out. With **nodemcu-timer**, you don't have to worry about whether a timer is available or not. It is a soft timer utility that allows you to schedule tasks with Javascript(/node.js) style APIs in your **nodemcu** project, i.e., `setTimeout()` and `clearTimeout()`.  
   
-**nodemcu-timer** uses a single timer, task queues and 1-ms tick to simulate the behavior of `setTimeout()`, `setInterval()`, and `setImmediate()`. Only one task executes when a tick fires (excepts those scheduled by [`setImmediate()`](#API_setImmediate)), thus **nodemcu-timer** does not guarantee that the callback will fire at exact timing but as close as possilbe. When a callback is _setImmediate_, it will be executed at right next tick immediately even if there are other tasks being due at the same time. The internal timer will automatically start when a scheduled task enqueues, and automatically stopped when there is no task in queues. **nodemcu-timer** uses only a single timer (id=6 by default) internally, and you are free to use other 5 timers that `tmr` provides.
+**nodemcu-timer** uses a single timer to simulate the behavior of `setTimeout()`, `setInterval()`, and `setImmediate()`. Only one task executes when a tick fires (excepts those scheduled by [`setImmediate()`](#API_setImmediate)), thus **nodemcu-timer** does not guarantee that the callback will fire at exact timing but as close as possilbe. When a callback is _setImmediate_, it will be executed at right next tick immediately even if there are other tasks being due at the same time. The internal timer will automatically start when a scheduled task enqueues, and automatically stopped when there is no task in queues. **nodemcu-timer** uses only a single timer (id=6 by default) internally, and you are free to use other 5 timers that `tmr` provides.
+
+[**Note**]  
+This module internally polls its task queues every 2ms. When you call `setTimeout()` and `setInterval()`, it is better to give the `delay` with an even number, e.g., `setTimeout(callback, 2000)` will fire the callback in 2 seconds. It is okay for `delay` to be odd, it will minus 1 to be even implicitly and will result in a timing error as small as 1ms. I think this small error is negligible if you are scheduling your task with an interval up to few hundreds of ms.  
+(I didn't use a tick of 1ms, because `tmr` is a bad ass when you give him a repeat interval of 1ms. If you do so, nodemcu will crash and I don't know why.)
 
 
 <a name="Installation"></a>
@@ -21,8 +26,8 @@ The [**nodemcu**](https://github.com/nodemcu/nodemcu-firmware) `tmr` module has 
 
 > $ git clone https://github.com/simenkid/nodemcu-timer.git
   
-Just include the file `nodemcu-timer.lua` in your project.  
-If you are with the **nodemcu** on ESP8266, it would be good for you to compile \*.lua text file into \*.lc.  
+Just include the file `timer.lua` or use the minified one `timer_min.lua` in your project.  
+If you are with the **nodemcu** on ESP8266, it would be good for you to compile `*.lua` text file into `*.lc` to further lower memory usage.  
 
 <a name="APIs"></a>
 ## 3. APIs
@@ -40,7 +45,7 @@ If you are with the **nodemcu** on ESP8266, it would be good for you to compile 
 Exposed by `require 'nodemcu-timer'`  
   
 ```lua
-local timer = require 'nodemcu-timer'
+local timer = require 'timer'  -- or 'timer_min'
 ```
 
 <br />
@@ -53,12 +58,12 @@ Schedules a one-time callback after `delay` ms. This API returns a timer-object(
 **Arguments:**  
 
 1. `callback` (_function_): The function to be scheduled.
-2. `delay` (_number_): value of time in milisecond.
+2. `delay` (_number_): Time in milisecond, an even number would be better.
 3. `...` (_variadic arguments_): The arguments pass to your callback.
 
 **Returns:**  
   
-* (_Object_) Timer-object.
+* (_object_) Timer-object.
 
 **Examples:**
 
@@ -78,7 +83,7 @@ Removes the timeout timer-object from triggering.
   
 **Arguments:**  
 
-1. `tobj` (_Object_): Timer-object to remove.
+1. `tobj` (_object_): Timer-object to remove.
 
 **Returns:**  
   
@@ -102,12 +107,12 @@ timer.clearTimeout(tmout)
 ### setInterval(callback, delay, ...)
 Schedules a callback to be executed every `delay` ms. This API returns a timer-object(`tobj`) for possible use with clearInterval(). You can also pass parameters to the callback via the variadic arguments.  
 
-If `delay` is larger than 2147483647 ms (~25 days) or less than 1, **nodemcu-timer** will use 1 as the `delay`. 
+If `delay` is larger than 2147483647 ms (~25 days) or less than 2, **nodemcu-timer** will use 2 as the `delay`. 
   
 **Arguments:**  
 
 1. `callback` (_function_): The function to be scheduled.
-2. `delay` (_number_): value of time in milisecond.
+2. `delay` (_number_): Time in milisecond, an even number would be better.
 3. `...` (_variadic arguments_): The arguments pass to your callback.
   
 **Returns:**  
@@ -151,7 +156,7 @@ timer.clearInterval(repeater)
 ********************************************
 
 <a name="API_setImmediate"></a>
-### setImmediate(callback, delay, ...)
+### setImmediate(callback, ...)
 Schedules a callback to be immediately executed at next tick, its priority is higher than those tasks set by `setTimeout()` and `setInterval()`. This API returns a timer-object(`tobj`) for possible use with clearImmediate(). You can also pass parameters to the callback via the variadic arguments.  
 
 The callbacks for immediate execution enqueues in the order in which they were created. All immediate callbacks in the queue will be invoked right away when a tick fires. If you queue an immediate callback from inside an executing callback, that immediate callback won't be invoked until the next tick comes. Remember that do not shcedule a long task for immediate execution as possible.
@@ -160,8 +165,7 @@ The callbacks for immediate execution enqueues in the order in which they were c
 **Arguments:**  
 
 1. `callback` (_function_): The function to be scheduled.
-2. `delay` (_number_): value of time in milisecond.
-3. `...` (_variadic arguments_): The arguments pass to your callback.
+2. `...` (_variadic arguments_): The arguments pass to your callback.
   
 **Returns:**  
   

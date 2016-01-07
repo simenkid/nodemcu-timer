@@ -1,6 +1,5 @@
 ------------------------------------------------------------------------------
 -- Timer Utility in Node.js Style
--- 
 -- LICENSE: MIT
 -- Simen Li <simenkid@gmail.com>
 ------------------------------------------------------------------------------
@@ -44,8 +43,7 @@ local function checkloops()
 
     if (#exequeImmed > 0) then  -- Immediately execute all targets
         for i, immed in ipairs(exequeImmed) do
-            local ar = immed.args
-            local status, err = pcall(immed.f, unpack(ar))
+            local status, err = pcall(immed.f, unpack(immed.argus))
             if not (status) then print("Task execution fails: " .. tostring(err)) end
         end
         rmEntry(exequeImmed, function (v) return v ~= nil end)
@@ -64,14 +62,14 @@ local function checkloops()
             else table.insert(ttbl, tobj)
             end
         end
-        local status, err = pcall(tobj.f, unpack(tobj.args))
+        local status, err = pcall(tobj.f, unpack(tobj.argus))
         if not (status) then print("Task execution fails: " .. tostring(err)) end
     end
     lock = false
 end
 
 function timer.start()
-        tmr.alarm(timer.id, 2, 1, checkloops)   -- tid = 6, intvl = 1ms, repeat
+        tmr.alarm(timer.id, 2, 1, checkloops)   -- tid = 6, intvl = 2ms, repeat = 1
         timer.enable = true
 end
 
@@ -93,18 +91,14 @@ function timer.set(tid)
 end
 
 function timer.setImmediate(fn, ...)
-    local tobj = { delay = 0, f = fn, rp = 0, args = {...} }
+    local tobj = { delay = 0, f = fn, rp = 0, argus = {...} }
     table.insert(_exequeImmed, tobj)
     if (timer.enable == false) then timer.start() end
     return tobj
 end
 
 function timer.setTimeout(fn, delay, ...)
-    print('set timeout args')
-    print(...)
-    local x = {...}
-    print(unpack(x))
-    local tobj = { delay = delay, f = fn, rp = 0, args = {...} }
+    local tobj = { delay = delay, f = fn, rp = 0, argus = {...} }
     if (delay <= tick or delay > 2147483646) then
         tobj.delay = tick
         table.insert(exeque, tobj)
