@@ -1,7 +1,7 @@
 nodemcu-timer
 ========================
-Current version: v1.0.0 (stable)
-Compatible Lua version: 5.1.x
+Current version: v1.0.0 (stable)  
+Compatible Lua version: 5.1.x  
 <br />
 
 ## Table of Contents
