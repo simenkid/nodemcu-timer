@@ -31,6 +31,14 @@ This module internally polls its task queues every 2ms. When you call `setTimeou
 Just include the file `timer.lua` or use the minified one `timer_min.lua` in your project.  
 If you are with the **nodemcu** on ESP8266, it would be good for you to compile `*.lua` text file into `*.lc` bytecode to further lower memory usage.  
 
+* FS/Memory footprint  
+
+    * timer.lua: ~3.9 KB(file size) / ~20 KB (heap available after loaded)  
+    * timer_min.lua: ~2.0 KB(size) / ~20 KB (heap)  
+    * timer.lc: ~3.2 KB(size) / ~25 KB (heap)  
+    * timer.lc + events.lc: ~17.7 KB (heap)  
+    <br />
+
 <a name="APIs"></a>
 ## 3. APIs
 
