@@ -335,7 +335,7 @@ timer.setTimeout(function ()
     blinkLED(LED_PIN3, 10, 200)
 end, 5104)
 ```
-..
+  
 <br />
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=lgxL6kICU7w" target="_blank"><img src="http://img.youtube.com/vi/lgxL6kICU7w/0.jpg" alt="led demo" width="320" height="240" border="10" />
 <br />
