@@ -273,7 +273,7 @@ print(timer.id)    -- 2
 <a name="LED"></a>  
 ## 4. Example: LED Blinks
 
-1. The first old-fashioned example is to repeatly turn on an LED for 1 second and turn if off for another 1 second. (my LED is configured with active-low to gpio)
+* The first old-fashioned example is to repeatly turn on an LED for 1 second and turn if off for another second. (my LED is configured with active-low to gpio)  
 
 ```lua
 local timer = require 'timer'
@@ -292,8 +292,8 @@ timer.setInterval(function ()
 end, 1000)
 ```
 
-2. The second one shows a generic blinkLED() function used to blink LEDs. It's reentrant and you don't have to worry about which timer is available. Instead, what you have to do is to manage a time-object(a scheduled task) and not the timer itself.  
-This example drives three LEDs that blink with different rate and repeat with different times. Each of them is triggered at 1234ms, 3528ms, and 5104ms after scheduled. Try to schedule these simple blinking things with `tmr`, and you may find that it is really a pain in the ass. This is why I made **nodemcu-timer** to shcedule things - to fix my own ass.
+* The second one shows a generic blinkLED() function used to blink LEDs. It's reentrant and you don't have to worry about which timer is available. Instead, what you have to do is to manage a time-object(a scheduled task) and not the timer itself.  
+This example drives three LEDs that blink with different rate and repeat with different times. Each of them is triggered at 1234ms, 3528ms, and 5104ms after scheduled. Try to schedule these simple blinking things with `tmr`, and you may find that it is really a pain in the ass. This is why I made **nodemcu-timer** to shcedule things - to fix my own ass.  
 
 ```lua
 local timer = require 'timer'
