@@ -9,6 +9,8 @@ Compatible Lua version: 5.1.x
 1. [Overiew](#Overiew)  
 2. [Installation](#Installation)  
 3. [APIs](#APIs)  
+4. [Example: LED Blinks](#LED)  
+
 
 <a name="Overiew"></a>  
 ## 1. Overview  
@@ -268,6 +270,74 @@ print(timer.id)    -- 2
 ```
 
   
+<a name="LED"></a>  
+## 4. Example: LED Blinks
+
+1. The first old-fashioned example is to repeatly turn on an LED for 1 second and turn if off for another 1 second. (my LED is configured with active-low to gpio)
+
+```lua
+local timer = require 'timer'
+
+local LED_PIN1 = 0
+gpio.mode(LED_PIN1, gpio.OUTPUT)
+
+local sw1 = true
+timer.setInterval(function ()
+    if (sw1) then
+        gpio.write(LED_PIN1, gpio.LOW)
+    else
+        gpio.write(LED_PIN1, gpio.HIGH)
+    end
+    sw1 = not sw1
+end, 1000)
+```
+
+2. The second one shows a generic blinkLED() function used to blink LEDs. It's reentrant and you don't have to worry about which timer is available. Instead, what you have to do is to manage a time-object(a scheduled task) and not the timer itself.  
+This example drives three LEDs that blink with different rate and repeat with different times. Each of them is triggered at 1234ms, 3528ms, and 5104ms after scheduled. Try to schedule these simple blinking things with `tmr`, and you may find that it is really a pain in the ass. This is why I made **nodemcu-timer** to shcedule things - to fix my own ass.
+
+```lua
+local timer = require 'timer'
+
+local LED_PIN1, LED_PIN2, LED_PIN3 = 0, 1, 2
+
+gpio.mode(LED_PIN1, gpio.OUTPUT)
+gpio.mode(LED_PIN2, gpio.OUTPUT)
+gpio.mode(LED_PIN3, gpio.OUTPUT)
+
+function blinkLED(led, times, interval)
+    local sw, count, tobj = true, 0
+
+    tobj = timer.setInterval(function ()
+        if (sw) then
+            gpio.write(led, gpio.LOW)
+        else
+            gpio.write(led, gpio.HIGH)
+            count = count + 1
+        end
+        sw = not sw
+  
+        if (count == times) then
+            timer.clearInterval(tobj)
+            gpio.write(led, gpio.HIGH)
+        end
+    end, interval)
+end
+
+timer.setTimeout(function ()
+    blinkLED(LED_PIN1, 5, 560)
+end, 1234)
+
+timer.setTimeout(function ()
+    blinkLED(LED_PIN2, 3, 1024)
+end, 3528)
+
+timer.setTimeout(function ()
+    blinkLED(LED_PIN3, 10, 200)
+end, 5104)
+```
+..
+<br />
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=lgxL6kICU7w" target="_blank"><img src="http://img.youtube.com/vi/lgxL6kICU7w/0.jpg" alt="led demo" width="320" height="240" border="10" />
 <br />
 ********************************************
 <br />
