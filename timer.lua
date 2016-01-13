@@ -11,6 +11,7 @@ timer.enable = false
 timer.id = 6
 
 local function rmEntry(tbl, pred)
+    if (pred == nil) then return end
     local x, len = 0, #tbl
     for i = 1, len do
         local trusy, idx = false, (i - x)
