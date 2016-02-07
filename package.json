@@ -1,8 +1,8 @@
 {
   "name": "nodemcu-timer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A soft timer utility that allows you to schedule tasks with Javascript(/node.js) style APIs in your NodeMcu project on ESP8266",
-  "main": "timer_min.lua",
+  "main": "timer.lua",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
