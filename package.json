@@ -1,0 +1,24 @@
+{
+  "name": "nodemcu-timer",
+  "version": "1.0.0",
+  "description": "A soft timer utility that allows you to schedule tasks with Javascript(/node.js) style APIs in your NodeMcu project on ESP8266",
+  "main": "timer_min.lua",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/simenkid/nodemcu-timer.git"
+  },
+  "keywords": [
+    "timer",
+    "nodemcu",
+    "esp8266"
+  ],
+  "author": "Simen Li",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/simenkid/nodemcu-timer/issues"
+  },
+  "homepage": "https://github.com/simenkid/nodemcu-timer#readme"
+}

@@ -28,7 +28,11 @@ This module internally polls its task queues every 2ms. When you call `setTimeou
 <a name="Installation"></a>
 ## 2. Installation
 
+Clone from github
 > $ git clone https://github.com/simenkid/nodemcu-timer.git
+
+or use npm install
+> $ npm install nodemcu-timer
   
 Just include the file `timer.lua` or use the minified one `timer_min.lua` in your project.  
 If you are with the **nodemcu** on ESP8266, it would be good for you to compile `*.lua` text file into `*.lc` bytecode to further lower memory usage.  
