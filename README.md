@@ -203,7 +203,7 @@ end, 1000)
 ### setImmediate(callback, ...)
 Schedules a callback to be immediately executed at next tick, its priority is higher than those tasks set by `setTimeout()` and `setInterval()`. This API returns a timer-object(`tobj`) for possible use with clearImmediate(). You can also pass parameters to the callback via the variadic arguments.  
 
-The callbacks for immediate execution enqueues in the order in which they were created. All immediate callbacks in the queue will be invoked right away when a tick fires. If you queue an immediate callback from inside an executing callback, that immediate callback won't be invoked until the next tick comes. Remember that do not shcedule a long task for immediate execution as possible.
+The callbacks for immediate execution enqueues in the order in which they were created. All immediate callbacks in the queue will be invoked right away when a tick fires. If you queue an immediate callback from inside an executing callback, that immediate callback won't be invoked until the next tick comes. Remember that do not schedule a long task for immediate execution as possible.
 
   
 **Arguments:**  
